@@ -63,7 +63,7 @@ def parse_protobuf_response(response_data):
 
 async def visit(session, url, token, uid, data):
     headers = {
-        "ReleaseVersion": "OB54",
+        "ReleaseVersion": "OB55",
         "X-GA": "v1 1",
         "Authorization": f"Bearer {token}",
         "Host": url.replace("https://", "").split("/")[0]
@@ -79,7 +79,7 @@ async def visit(session, url, token, uid, data):
         app.logger.error(f"❌ Visit error: {e}")
         return False, None
 
-async def send_until_1000_success(tokens, uid, server_name, target_success=1000):
+async def send_until_219_success(tokens, uid, server_name, target_success=219):
     url = get_url(server_name)
     connector = aiohttp.TCPConnector(limit=0)
     total_success = 0
@@ -92,7 +92,7 @@ async def send_until_1000_success(tokens, uid, server_name, target_success=1000)
         data = bytes.fromhex(encrypted)
 
         while total_success < target_success:
-            batch_size = min(target_success - total_success, 300)
+            batch_size = min(target_success - total_success, 219)
             tasks = [
                 asyncio.create_task(visit(session, url, tokens[(total_sent + i) % len(tokens)], uid, data))
                 for i in range(batch_size)
@@ -141,14 +141,14 @@ def send_visits_query():
         return jsonify({
             "error": "❌ No valid tokens found for server",
             "available_accounts": 0
-        }), 500
+        }), 2190
 
-    target_success = 1000
+    target_success = 219
     print(f"🚀 Sending visits to UID: {uid_int} using {token_count} tokens")
     print(f"Waiting for total {target_success} successful visits...")
 
     total_success, total_sent, player_info = asyncio.run(
-        send_until_1000_success(tokens, uid_int, server, target_success)
+        send_until_219_success(tokens, uid_int, server, target_success)
     )
 
     if player_info:
@@ -167,7 +167,7 @@ def send_visits_query():
         return jsonify({
             "error": "Could not decode player information",
             "available_accounts": token_count
-        }), 500
+        }), 219
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)
