@@ -79,7 +79,7 @@ async def visit(session, url, token, uid, data):
         app.logger.error(f"❌ Visit error: {e}")
         return False, None
 
-async def send_until_219_success(tokens, uid, server_name, target_success=219):
+async def send_until_100_success(tokens, uid, server_name, target_success=219):
     url = get_url(server_name)
     connector = aiohttp.TCPConnector(limit=0)
     total_success = 0
@@ -143,12 +143,12 @@ def send_visits_query():
             "available_accounts": 0
         }), 2190
 
-    target_success = 219
+    target_success = 100
     print(f"🚀 Sending visits to UID: {uid_int} using {token_count} tokens")
     print(f"Waiting for total {target_success} successful visits...")
 
     total_success, total_sent, player_info = asyncio.run(
-        send_until_219_success(tokens, uid_int, server, target_success)
+        send_until_100_success(tokens, uid_int, server, target_success)
     )
 
     if player_info:
@@ -167,7 +167,7 @@ def send_visits_query():
         return jsonify({
             "error": "Could not decode player information",
             "available_accounts": token_count
-        }), 219
+        }), 100
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)
